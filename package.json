@@ -1,6 +1,6 @@
 {
   "name": "@justinwwolcott/ez-web-crypto",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "class for working with webcrypto in browser and node",
   "main": "index.js",
   "scripts": {
