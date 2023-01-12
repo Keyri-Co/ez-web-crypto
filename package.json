@@ -1,5 +1,5 @@
 {
-  "name": "ez-web-crypto",
+  "name": "@Keyri-Co/ez-web-crypto",
   "version": "1.0.0",
   "description": "class for working with webcrypto in browser and node",
   "main": "index.js",
