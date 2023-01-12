@@ -1,0 +1,20 @@
+{
+  "name": "ez-web-crypto",
+  "version": "1.0.0",
+  "description": "class for working with webcrypto in browser and node",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./tests/index.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Keyri-Co/EZCrypto.git"
+  },
+  "author": "Justin W. Wolcott",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Keyri-Co/EZCrypto/issues"
+  },
+  "homepage": "https://github.com/Keyri-Co/EZCrypto#readme",
+  "type": "module"
+}
