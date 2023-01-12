@@ -143,6 +143,8 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   HASH = async (algo, data, len) => {
 
+    await this.#sleep(0);
+
     let hash = await this.#crypto.subtle.digest(algo, new TextEncoder().encode(data));
     
     let ary = new Uint8Array(hash);
@@ -166,6 +168,94 @@ export default class EZCrypto {
     return this.arrayToBase64(new Uint8Array(outAry));
 
   }
+
+
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  //
+  // Function:     PASSWORD_ENCRYPT
+  // What is this: Dead simple method to encrypt a piece of data with a password
+  //               that can later be decrypted needing only that password 
+  //
+  // Arguments:    password: string; plaintext string of user's password
+  //               base64data: string; what you want to encrypt
+  //
+  // Returns:      base64 encoded, stringified object containing the AES key used
+  //               to encrypt the data, and the ciphertext itself
+  // Notes:
+  //
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  PASSWORD_ENCRYPT = async(password, base64data) => {
+
+      await this.#sleep(0);
+
+      // let passwordHash = this.HASH("SHA-512", password);
+
+      for(let i = 0; i < 10_000; i++){
+        password = this.HASH("SHA-512", password);
+      }
+      
+      let passwordHash = btoa(password);
+    
+      let aes = await this.AESMakeKey(true);
+
+      let output = await this.AESEncrypt(aes, base64data, passwordHash);
+
+      return btoa(JSON.stringify({ciphertext: output.ciphertext, aes}));
+  }
+
+
+
+  // //////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////
+  //
+  //
+  // Function:     PASSWORD_DECRYPT
+  // What is this: Counterparty to PASSWORD_ENCRYPT. Give it a password, and
+  //               the encrypted data from PASSWORD_ENCRYPT; it should give you
+  //               the initial plaintext...
+  //
+  // Arguments:    password: string; plaintext string of user's password
+  //               base64data: password-data
+  //
+  // Returns:      plaintext
+  //
+  // Notes:
+  //
+  //
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+  PASSWORD_DECRYPT = async(password, base64data) => {
+
+    await this.#sleep(0);
+
+      // let passwordHash = this.HASH("SHA-512", password);
+
+      for(let i = 0; i < 10_000; i++){
+        password = this.HASH("SHA-512", password);
+      }
+      
+      let passwordHash = btoa(password);
+
+    let encryptedDataObject = JSON.parse(atob(base64data));
+  
+    let aes = await this.AESImportKey(encryptedDataObject.aes,false);
+
+    let ciphertext = encryptedDataObject.ciphertext;
+
+    let plaintext = await this.AESDecrypt(aes, passwordHash, ciphertext, true);
+
+    return plaintext;
+}
+
+
+
+
+
 
 
 
