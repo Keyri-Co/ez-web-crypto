@@ -16,5 +16,17 @@
     "url": "https://github.com/Keyri-Co/EZCrypto/issues"
   },
   "homepage": "https://github.com/Keyri-Co/EZCrypto#readme",
-  "type": "module"
+  "type": "module",
+  "directories": {
+    "test": "tests"
+  },
+  "keywords": [
+    "web",
+    "crypto",
+    "subtle",
+    "crypto",
+    "encryption",
+    "ecdh",
+    "ecdsa"
+  ]
 }
