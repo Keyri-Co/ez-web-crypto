@@ -193,10 +193,8 @@ export default class EZCrypto {
 
       await this.#sleep(0);
 
-      // let passwordHash = this.HASH("SHA-512", password);
-
-      for(let i = 0; i < 10_000; i++){
-        password = this.HASH("SHA-512", password);
+      for(let i = 0; i < 10; i++){
+        password = await this.HASH("SHA-512", password);
       }
       
       let passwordHash = btoa(password);
@@ -233,13 +231,11 @@ export default class EZCrypto {
 
     await this.#sleep(0);
 
-      // let passwordHash = this.HASH("SHA-512", password);
-
-      for(let i = 0; i < 10_000; i++){
-        password = this.HASH("SHA-512", password);
-      }
+    for(let i = 0; i < 10; i++){
+      password = await this.HASH("SHA-512", password);
+    }
       
-      let passwordHash = btoa(password);
+    let passwordHash = btoa(password);
 
     let encryptedDataObject = JSON.parse(atob(base64data));
   
