@@ -547,7 +547,7 @@ export default class EZCrypto {
     )
     
     // 3.) Work smarter, not harder, dummy...
-    return await this.AESEncrypt(b64_aes_key, b64data);
+    return await this.AESEncrypt(aes_key, b64data);
   
   };
 
