@@ -72,8 +72,20 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-  arrayToBase64(ary) {
-    return btoa(String.fromCharCode(...ary));
+  arrayToBase64(utf8Bytes) {
+    // Split the bytes into smaller chunks to avoid call stack issues
+    const chunkSize = 8192;
+    const chunks = [];
+
+    for (let i = 0; i < utf8Bytes.length; i += chunkSize) {
+      const chunk = utf8Bytes.subarray(i, i + chunkSize);
+      chunks.push(String.fromCharCode.apply(null, chunk));
+    }
+
+    // Convert the bytes to a base64 string
+    const base64 = btoa(chunks.join(''));
+
+    return base64;
   }
 
   // //////////////////////////////////////////////////////////////////////////
@@ -575,7 +587,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-  EcDecrypt = async (b64Private, b64Public, b64Nonce, b64data) => {
+  EcDecrypt = async (b64Private, b64Public, b64Nonce, b64data, returnText = false) => {
 
     // 1.) convert the given keys to real keys in the most
     //     generic way possible...
@@ -583,6 +595,7 @@ export default class EZCrypto {
     let privateKey = await this.EcdhConvertKey(b64Private);
     let nonce = this.base64ToArray(b64Nonce);
     let data = this.base64ToArray(b64data);
+    let decrypted;
 
     // 2.) generate shared key
     let aes_key = await this.#crypto.subtle.deriveKey(
@@ -593,12 +606,20 @@ export default class EZCrypto {
       ["encrypt", "decrypt"]
     );
 
-    // 4.) encrypt our data
-    return await this.#crypto.subtle.decrypt(
+    // 3..) decrypt our data
+    const decryptedData = await this.#crypto.subtle.decrypt(
       { name: "AES-GCM", iv: nonce },
       aes_key,
       data
     );
+
+    if(!returnText){
+      return decryptedData;
+    } else {
+      decrypted = new Uint8Array(decryptedData);
+      decrypted = new TextDecoder().decode(decrypted);
+      return decrypted;
+    }
   };
   
 
@@ -743,7 +764,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
-  HKDFDecrypt = async (b64Private, b64Public, b64Salt, b64iv, b64data) => {
+  HKDFDecrypt = async (b64Private, b64Public, b64Salt, b64iv, b64data, returnText = false) => {
     await this.#sleep(0);
 
     // 1.) convert the given keys to real keys in the most
@@ -755,6 +776,8 @@ export default class EZCrypto {
     let salt = this.base64ToArray(b64Salt);
     let iv = this.base64ToArray(b64iv);
     let data = this.base64ToArray(b64data);
+
+    let decrypted;
     
     
     // 2.) generate shared secret for HKDF
@@ -808,7 +831,13 @@ export default class EZCrypto {
       console.log({name: e.name, stack: e.stack, message: e.message});
     }
 
-    return aes_data;
+    if(!returnText){
+      return aes_data;
+    } else {
+      decrypted = new Uint8Array(aes_data);
+      decrypted = new TextDecoder().decode(decrypted);
+      return decrypted;
+    }
 
   };
   
