@@ -829,6 +829,7 @@ export default class EZCrypto {
       );
     } catch(e){
       console.log({name: e.name, stack: e.stack, message: e.message});
+      throw e;
     }
 
     if(!returnText){
@@ -1023,7 +1024,7 @@ export default class EZCrypto {
       );
       return key;
 
-    } catch(e){}
+    } catch(e){} // DO NOTHING!!!
     //
     //
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -1041,7 +1042,7 @@ export default class EZCrypto {
       );
       return key;
       
-    } catch(e){}
+    } catch(e){} // DO NOTHING!!!
     //
     //
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -1059,7 +1060,7 @@ export default class EZCrypto {
       );
       return key;
       
-    } catch(e){}
+    } catch(e){} // DO NOTHING!!!
     //
     //
     // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -1140,7 +1141,7 @@ export default class EZCrypto {
       
       return key;
       
-    } catch(e){}
+    } catch(e){} // DO NOTHING!
 
     //
     //
@@ -1161,7 +1162,7 @@ export default class EZCrypto {
 
       return key;
       
-    } catch(e){}
+    } catch(e){} // DO NOTHING!
 
     //
     //
@@ -1182,7 +1183,7 @@ export default class EZCrypto {
 
       return key;
       
-    } catch(e){}
+    } catch(e){} // DO NOTHING
 
     //
     //
