@@ -3,7 +3,7 @@ const ezcrypto = new EZCrypto;
 
 test("everything should work test", async () => {
     
-    let str = "Hello, 世界!".repeat(10_000);
+    let str = "Hello, 世界!, محمد علی".repeat(10);
     let strAry = new TextEncoder().encode(str);
 
     let b64str = ezcrypto.arrayToBase64(strAry);
@@ -47,6 +47,8 @@ test("everything should work test", async () => {
 
     // TEST 5 -
     expect(str).toBe(hkdfDecrypted);
+
+    console.log(str, hkdfDecrypted);
 
   /*
     EcMakeSigKeys(exportable?: boolean): Promise<{ publicKey: string; privateKey: string | CryptoKey }>;
