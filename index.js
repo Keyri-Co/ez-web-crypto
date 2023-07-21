@@ -14,7 +14,7 @@ export default class EZCrypto {
     this._crypto = undefined;
 
     if(typeof window == "undefined" && typeof self == "undefined"){
-      this.#nodeEnvLoad();
+      this._nodeEnvLoad();
     } else {
       try{
         this._crypto = window?.crypto;
@@ -28,7 +28,7 @@ export default class EZCrypto {
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
-  #nodeEnvLoad = async () => {
+  _nodeEnvLoad = async () => {
     this._crypto =  await Object.getPrototypeOf(async function(){}).constructor(
 `
       return await import( "crypto" ).then((m) => {return m.default.webcrypto});
@@ -38,7 +38,7 @@ export default class EZCrypto {
 
   // //////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////
-  #sleep = async (duration) => {
+  _sleep = async (duration) => {
     await new Promise((s,j) => {setTimeout(() => {return s(true)},duration)});
   }
 
@@ -102,13 +102,13 @@ export default class EZCrypto {
   //               data   - this is the string you're encrypting
   //
   // Returns:      hex encoded 32 character string or something...(todo: check length - better def)
-  // Notes:        https://stackoverflow.com/questions/47329132/how-to-get-hmac-with-crypto-web-api#47332317
+  // Notes:        https://stackoverflow.com/questions/47329132/how-to-get-hmac-with-crypto-web-api_47332317
   //
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   HMAC = async (secret, data) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     // To do work, we need to convert text to Uint8Arrays
     let encoder = new TextEncoder("utf-8");
@@ -157,7 +157,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   HASH = async (algo, data, len) => {
 
-    await this.#sleep(0);
+    await this._sleep(0);
 
     let hash = await this._crypto.subtle.digest(algo, new TextEncoder().encode(data));
     
@@ -205,7 +205,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   PASSWORD_ENCRYPT = async(password, base64data) => {
 
-      await this.#sleep(0);
+      await this._sleep(0);
 
       for(let i = 0; i < 10; i++){
         password = await this.HASH("SHA-512", password);
@@ -243,7 +243,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   PASSWORD_DECRYPT = async(password, base64data) => {
 
-    await this.#sleep(0);
+    await this._sleep(0);
 
     for(let i = 0; i < 10; i++){
       password = await this.HASH("SHA-512", password);
@@ -284,7 +284,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   AESMakeKey = async (exportable = true) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     // 1.) Generate the Key
     let key = await this._crypto.subtle.generateKey(
@@ -323,7 +323,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   AESImportKey = async (aes_key, exportable = true) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
 
     if(aes_key instanceof this._crypto.CryptoKey){
@@ -357,7 +357,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   async AESEncrypt(base_64_key, base_64_data, base_64_nonce = false) {
-    await this.#sleep(0);
+    await this._sleep(0);
     
     // 0.) Pass Key to 
     let aes_key = await this.AESImportKey(base_64_key);
@@ -403,7 +403,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   async AESDecrypt(base_64_key, base_64_nonce, base_64_cipher, returnText = false) {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     // 1.) Convert out from base64 to array
     let aes_key = await this.AESImportKey(base_64_key);
@@ -446,7 +446,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   EcMakeCryptKeys = async (exportable = true) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     // Step 1) Create ECDH KeyS
     let keys = await this._crypto.subtle.generateKey(
@@ -544,7 +544,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   EcEncrypt = async (b64Private, b64Public, b64data) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     // 1.) convert the given keys to real keys in the most
     //     generic way possible...
@@ -667,7 +667,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   HKDFEncrypt = async (b64Private, b64Public, b64data) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     // 1.) convert the given keys to real keys in the most
     //     generic way possible...
@@ -767,7 +767,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   HKDFDecrypt = async (b64Private, b64Public, b64Salt, b64iv, b64data, returnText = false) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     // 1.) convert the given keys to real keys in the most
     //     generic way possible...
@@ -874,7 +874,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   
   EcMakeSigKeys = async (exportable = true) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
   // Step 1) Create ECDSA KeyS
     let keys = await this._crypto.subtle.generateKey(
@@ -929,7 +929,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   EcSignData = async (b64PrivateKey, b64data) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     // 1.) convert the given keys to real keys
     let privateKey = await this.EcdsaConvertKey(b64PrivateKey);
@@ -960,7 +960,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
   EcVerifySig = async (b64PublicKey, b64Signature, b64data) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     // 1.) convert the given keys to real keys
     let publicKey = await this.EcdsaConvertKey(b64PublicKey);
@@ -998,7 +998,7 @@ export default class EZCrypto {
   
   
   EcdhConvertKey = async (unknown_key) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     let key;
     let longKey;
@@ -1109,7 +1109,7 @@ export default class EZCrypto {
   // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   
   EcdsaConvertKey = async (unknown_key) => {
-    await this.#sleep(0);
+    await this._sleep(0);
 
     let key;
     let longKey;
